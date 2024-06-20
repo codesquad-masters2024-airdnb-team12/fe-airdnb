@@ -8,6 +8,6 @@
 <Route path="/accommodations"><AccommodationPage/></Route>
 <Route path="/accommodations/:accommodationId" let:params>
     {#if /^\d+$/.test(params.accommodationId)}
-        <AccommodationDetail {accommodationId}/>
+        <AccommodationDetail accommodationId={params.accommodationId}/>
     {/if}
 </Route>
