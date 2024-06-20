@@ -7,46 +7,47 @@
 
     onMount(() => {
         try {
-            accommodations.fetchAccommodations()
+            accommodations.fetchAccommodations({page: 1});
         } catch (e) {
-            alert(e)
-            throw e
+            alert(e);
+            throw e;
         }
     });
 
-    const onBefore = async () => {
+    const onPrevious = async () => {
         try {
-            await accommodations.fetchAccommodations()
+            await accommodations.fetchAccommodations({page: Number($accommodations.currentPage) - 1});
         } catch (e) {
-            alert(e)
-            throw e
+            alert(e);
+            throw e;
         }
     }
 
     const onNext = async () => {
         try {
-            await accommodations.fetchAccommodations()
+            await accommodations.fetchAccommodations({page: Number($accommodations.currentPage) + 1});
         } catch (e) {
-            alert(e)
-            throw e
+            alert(e);
+            throw e;
         }
     }
 </script>
 
 <div>
-    <button on:click={onBefore}>이전 페이지</button>
-    <button on:click={onNext}>다음 페이지</button>
+    <button on:click={onPrevious} disabled={$accommodations.currentPage === 1}>이전 페이지</button>
+    <span style="margin: 0 10px;">{$accommodations.currentPage}</span>
+    <button on:click={onNext} disabled={$accommodations.currentPage === $accommodations.totalPages}>다음 페이지</button>
 </div>
 
 <SideBar/>
 <div>
-    <p>{$accommodations.numberOfElements}개의 숙소</p>
+    <p>{$accommodations.totalElements}개의 숙소</p>
 
     {#each $accommodations.content as accommodation}
         <AccommodationPreview {accommodation}/>
     {/each}
 
-    {#if $accommodations.numberOfElements === 0}
+    {#if $accommodations.totalElements === 0}
         <NoAccommodation/>
     {/if}
 </div>
