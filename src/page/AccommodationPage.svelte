@@ -36,7 +36,7 @@
 <div>
     <button on:click={onPrevious} disabled={$accommodations.currentPage === 1}>이전 페이지</button>
     <span style="margin: 0 10px;">{$accommodations.currentPage}</span>
-    <button on:click={onNext} disabled={$accommodations.currentPage === $accommodations.totalPages}>다음 페이지</button>
+    <button on:click={onNext} disabled={$accommodations.currentPage === $accommodations.totalPages || $accommodations.totalElements === 0}>다음 페이지</button>
 </div>
 
 <SideBar/>
