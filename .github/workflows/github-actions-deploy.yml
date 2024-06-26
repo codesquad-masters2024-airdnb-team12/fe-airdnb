@@ -34,11 +34,6 @@ jobs:
         username: ${{ secrets.DOCKER_USER_ID }}
         password: ${{ secrets.DOCKER_USER_PASSWORD }}
 
-    - name: Docker build & push to Docker repo
-      run: |
-        docker build -t ${{ secrets.DOCKER_USER_ID }}/${{ secrets.DOCKER_HUB_NAME }}:latest .
-        docker push ${{ secrets.DOCKER_USER_ID }}/${{ secrets.DOCKER_HUB_NAME }}:latest
-
     - name: Deploy to Prod Server
       uses: appleboy/scp-action@v0.1.7
       with:
