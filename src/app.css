@@ -1,3 +1,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply relative w-full items-center left-0 top-0;
+}
+
+
+.menu-item {
+  @apply text-right text-zinc-800 text-base font-normal;
+}
+
+.menu-item:hover {
+  @apply text-right text-black text-base font-bold underline;
+}
+
+.user-menu-container {
+  @apply absolute fixed flex pl-4 pr-2 py-1 space-x-2 left-[1290px] top-[50px] bg-white rounded-[30px] border border-stone-300
+}
+
+.user-profile {
+  @apply w-8 h-8 p-2 bg-zinc-500 rounded-[30px] justify-center items-center inline-flex
+}
+
+.user-menu {
+  @apply justify-center items-center inline-flex
+}
+
+.user-profile-icon {
+  @apply flex-col justify-center items-center inline-flex
+}
+
+.user-menu-icon {
+  @apply flex-col justify-center items-center inline-flex
+}
+
+.user-menu-popup-container {
+  @apply absolute flex-col inline-flex top-10 mt-2 right-[80px]
+}
+
+.user-menu-popup-btn {
+  @apply w-full h-full flex left-0 top-0 absolute bg-white rounded-[10px] shadow
+}
+
+.user-menu-popup-btn-label {
+  @apply w-[136px] left-[32px] top-[32px] absolute text-black text-base font-normal
+}
+
+.overlay {
+  @apply fixed top-0 left-0 right-0 w-full z-50
+}

@@ -1,0 +1,27 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codesquad-masters2024-airdnb-team12/fe-airdnb.git"
+  },
+  "private": true,
+  "dependencies": {
+    "@svelte-plugins/datepicker": "^1.0.9",
+    "axios": "^1.7.2",
+    "date-fns": "^3.6.0",
+    "flatpickr": "^4.6.13",
+    "svelte": "^4.2.18",
+    "svelte-calendar": "^3.1.6",
+    "svelte-datepicker": "^1.0.0",
+    "svelte-flatpickr": "^3.3.4",
+    "svelte-routing": "^2.13.0",
+    "tinro": "^0.6.12",
+    "vite": "^5.3.1"
+  }
+}

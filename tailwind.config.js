@@ -20,7 +20,7 @@ export default {
         slidein: {
           from: {
             opacity: "0",
-            transform: "translateY(-10px)",
+            transform: "translateX(10px)",
           },
           to: {
             opacity: "1",
