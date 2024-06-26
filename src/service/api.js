@@ -1,9 +1,8 @@
 import axios from "axios"
 
 const send = async ({method='', path='', data={}, access_token=''} = {}) => {
-    const commonUrl = 'http://localhost:8080'
     const versionUrl = '/api/v1'
-    const url = commonUrl + versionUrl + path
+    const url = versionUrl + path
 
     const headers = {
         "content-type": "application/json;charset=UTF-8",
