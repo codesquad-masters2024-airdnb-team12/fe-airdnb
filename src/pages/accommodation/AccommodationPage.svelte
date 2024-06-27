@@ -4,7 +4,7 @@
   import Header from "../../components/common/Header.svelte";
   import SearchBar from "../../components/common/SearchBar.svelte";
   import { onMount } from "svelte";
-  import AccommodationList from "../../components/accommodation/AccommodationList.svelte";
+  import AccommodationPreview from "../../components/accommodation/AccommodationPreview.svelte";
 
   onMount(() => {
     try {
@@ -41,15 +41,25 @@
 <SearchBar/>
 
 <div class="AccommodationGround relative w-full h-full bg-white justify-center items-center left-0 top-[170px]">
-  <div class="absolute bg-white w-[800px] left-0 top-0 z-10">
+  <div class="absolute bg-white w-[800px] left-0 top-0 ">
     {#if $accommodations.totalElements === 0}
       <NoAccommodation/>
     {:else}
-      <div class="Title absolute z-20 left-[20px] top-5 text-zinc-800 text-xl font-bold font-['Noto Sans KR'] uppercase">
+      <div class="relative  left-[20px] top-5 text-zinc-800 text-xl font-bold font-['Noto Sans KR'] uppercase bg-white p-2">
         {$accommodations.totalElements}개의 숙소가 검색됨
       </div>
 
-      <AccommodationList {$accommodations}/>
+      <div class="relative ">
+        {#each $accommodations.content as accommodation, index}
+          <div class="relative left-[25px] h-[220px] w-[790px] mt-4">
+            {#if index > 0}
+              <hr class="my-6">
+            {/if}
+
+            <AccommodationPreview {accommodation} />
+          </div>
+        {/each}
+      </div>
 
       <div class="PageBar relative justify-center bottom-1 flex my-10 space-x-4">
         <button class="text-s font-bold font-['Noto Sans KR'] border border-gray-300 rounded px-3 py-1.5 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-300" on:click={onPrevious} disabled={$accommodations.currentPage === 1}>

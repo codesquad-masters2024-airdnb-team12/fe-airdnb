@@ -18,11 +18,3 @@
 </script>
 
 
-
-{#each accommodationsData as accommodation}
-
-  <div class="WarpScroll relative z-20 left-[25px] h-[220px] w-[790px]">
-    <AccommodationPreview {accommodation} />
-  </div>
-
-{/each}

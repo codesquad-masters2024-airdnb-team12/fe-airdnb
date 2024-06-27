@@ -42,7 +42,7 @@
   });
 </script>
 
-<div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center text-black">
+<div class="fixed left-1/2 transform -translate-x-1/2 top-1/4 rounded-lg text-black">
   <div class="popup bg-white p-6 rounded-lg shadow-lg w-80">
     <div class="space-y-6">
       <div class="flex justify-between items-center">

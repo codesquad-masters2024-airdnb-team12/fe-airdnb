@@ -41,7 +41,7 @@
   });
 </script>
 
-<div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center text-black">
+<div class="flex absolute left-[650px] top-[160px] rounded-lg justify-center items-center text-black">
   <div class="popup bg-white p-6 rounded-lg shadow-lg">
     <div class="range-slider">
       <div class="text-lg font-bold mb-4">가격 범위</div>
@@ -60,10 +60,10 @@
 </div>
 
 <style>
-  /*.popup {*/
-  /*  width: 300px;*/
-  /*  z-index: 100; !* Ensure the popup is above other elements *!*/
-  /*}*/
+  .popup {
+    width: 300px;
+    z-index: 100; /* Ensure the popup is above other elements */
+  }
 
   label {
     color: black;

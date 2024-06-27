@@ -23,8 +23,7 @@
   // };
 </script>
 
-<div class="flex absolute left-[430px] top-[160px]">
-{#if onCalendarPopup}
+<div class="fixed left-1/4 transform -translate-x-1/2 top-1/4">
   <DatePicker
       theme="custom-datepicker"
       isOpen={true}
@@ -39,5 +38,4 @@
       showYearControls={false}
       on:dateSelected={handleDateSelected}
   />
-{/if}
 </div>

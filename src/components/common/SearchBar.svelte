@@ -106,23 +106,26 @@
 </div>
 
 {#if onCalendarPopup}
-  <CalendarPopup
-      bind:checkIn
-      bind:checkOut
-      {dowLabels}
-      {monthLabels}
-      {onCalendarPopup}
-      on:dateSelected={handleDateSelected}
-      on:toggle={onCalendarPopup}
-  />
+  <div class="">
+
+    <CalendarPopup
+        bind:checkIn
+        bind:checkOut
+        {dowLabels}
+        {monthLabels}
+        {onCalendarPopup}
+        on:dateSelected={handleDateSelected}
+        on:toggle={toggleCalendarPopup}
+    />
+  </div>
 {/if}
 
 {#if onRatePopup}
-  <RatePopup bind:selectedMinPrice={selectedMinPrice} bind:selectedMaxPrice={selectedMaxPrice} onClose={handleRateSelected} />
+  <RatePopup bind:selectedMinPrice={selectedMinPrice} bind:selectedMaxPrice={selectedMaxPrice} on:toggle={onRatePopup} onClose={handleRateSelected} />
 {/if}
 
 {#if onGuestPopup}
-  <GuestPopup bind:total={totalGuests} onClose={handleGuestsSelected} />
+  <GuestPopup bind:total={totalGuests} on:toggle={onGuestPopup} onClose={handleGuestsSelected} />
 {/if}
 
 <style>

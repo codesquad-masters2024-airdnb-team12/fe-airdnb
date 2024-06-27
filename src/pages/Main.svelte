@@ -1,11 +1,6 @@
 <script>
-  import { auth } from "../stores/auth.js";
   import Header from '../components/common/Header.svelte';
   import SearchBar from "../components/common/SearchBar.svelte";
-
-  export let member;
-
-  member = {...auth}
 
 </script>
 

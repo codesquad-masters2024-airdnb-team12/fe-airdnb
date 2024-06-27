@@ -1,26 +1,26 @@
 <script>
-  import {auth} from "../../stores/auth";
+  import { handleLogin } from "../../stores/stores";
+  import {onMount} from "svelte";
 
-  const handleOAuthLogin = (provider) => {
-    let loginUrl = '';
-    switch (provider) {
-      case 'github':
-        loginUrl = 'https://github.com/login/oauth/authorize?client_id=Ov23licEiwb7WgUnlhjc';
-        break;
-      case 'naver':
-        loginUrl = 'https://nid.naver.com/oauth2.0/authorize?...';
-        break;
-      case 'kakao':
-        loginUrl = 'https://kauth.kakao.com/oauth/authorize?...';
-        break;
-      case 'google':
-        loginUrl = 'https://accounts.google.com/o/oauth2/auth?...';
-        break;
-      default:
-        break;
-    }
-    window.location.href = loginUrl;
+  // OAuth 로그인 URL
+  const loginUrls = {
+    github: '/oauth2/authorization/github',
+    naver: 'https://nid.naver.com/oauth2.0/authorize?...',
+    kakao: 'https://kauth.kakao.com/oauth/authorize?...',
+    google: 'https://accounts.google.com/o/oauth2/auth?...'
   };
+
+  // OAuth 로그인 핸들러
+  onMount(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const refreshToken = params.get('refreshToken');
+
+    if (token && refreshToken) {
+      storeTokens(token, refreshToken);
+      // 리다이렉트 후 추가 처리 로직
+    }
+  });
 
   const handleClose = () => {
     $$props.closeLoginPopup();
@@ -30,7 +30,7 @@
 <div class="auth-popup-container">
   <div class="auth-popup">
     <button class="close-button" on:click={handleClose}>✕</button>
-<!--    <h5 class="title">로그인 또는 회원가입</h5>-->
+    <!--    <h5 class="title">로그인 또는 회원가입</h5>-->
     <button class="oauth-button github" on:click={() => handleOAuthLogin('github')}>
       <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub logo" class="oauth-logo" />
       GitHub로 로그인하기
@@ -50,6 +50,7 @@
   </div>
 </div>
 
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
@@ -60,12 +61,14 @@
     position: fixed;
     inset: 0;
     z-index: 100;
+    background: rgba(0, 0, 0, 0.5);
   }
 
   .auth-popup {
     background: rgba(30, 30, 30, 0.94);
     padding: 40px;
     border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     width: 550px;
     max-width: 100%;
     position: relative;

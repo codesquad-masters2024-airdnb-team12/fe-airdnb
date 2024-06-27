@@ -1,14 +1,14 @@
 import axios from "axios"
 
 const send = async ({method='', path='', data={}, access_token=''} = {}) => {
-  const commonUrl = 'http://localhost:8080'
+  const commonUrl = 'http://localhost:8080' // 실제 서버 URL로 수정 필요
   const versionUrl = '/api/v1'
   const url = commonUrl + versionUrl + path
 
   const headers = {
     "content-type": "application/json;charset=UTF-8",
-    "accept": "application/json,",
-    // 'Authorization': access_token ? `Bearer ${access_token}` : ''
+    "accept": "application/json",
+    'Authorization': access_token ? `Bearer ${access_token}` : ''
   };
 
   const options = {
@@ -16,7 +16,7 @@ const send = async ({method='', path='', data={}, access_token=''} = {}) => {
     url,
     headers,
     data,
-    // withCredentials: true,
+    withCredentials: true,
   }
 
   try {
@@ -24,7 +24,7 @@ const send = async ({method='', path='', data={}, access_token=''} = {}) => {
     return response.data
   }
   catch(error) {
-    alert(error)
+    console.error(error)
   }
 }
 

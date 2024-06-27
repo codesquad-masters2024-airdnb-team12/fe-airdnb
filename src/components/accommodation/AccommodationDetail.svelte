@@ -5,11 +5,23 @@
   import Header from "../common/Header.svelte";
   import Loading from "../common/Loading.svelte";
   import {router} from "tinro";
+  import {addDays, differenceInDays, format} from "date-fns";
+  import CalendarPopup from "../common/CalendarPopup.svelte";
+  import GuestPopup from "../common/GuestPopup.svelte";
 
   export let accommodationId;
+  export let checkIn;
+  export let checkOut;
+  export let totalGuests = 0;
 
+  let onGuestPopup = false;
   let accommodation = null;
   let loading = true;
+  let onCalendarPopup = false;
+  let dateFormat = 'M월 d일';
+  let urlDateFormat = 'yyyy-MM-dd';
+  const dowLabels = ["일", "월", "화", "수", "목", "금", "토"];
+  const monthLabels = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
 
   onMount(async () => {
     try {
@@ -32,6 +44,55 @@
   const onProfileImg = () => {
     return accommodation.hostImgUrl ? accommodation.hostImgUrl : "../../src/assets/profile_icon.svg";
   }
+
+  const toggleCalendarPopup = () => {
+    onCalendarPopup = !onCalendarPopup;
+  };
+
+  const handleGuestsSelected = (total) => {
+    totalGuests = total;
+    toggleGuestPopup();
+  };
+
+  const handleDateSelected = (e) => {
+    const { startDate, endDate } = e.detail;
+    checkIn = startDate;
+    checkOut = endDate;
+    toggleCalendarPopup();
+  };
+
+  const toggleGuestPopup = () => {
+    onGuestPopup = !onGuestPopup;
+  };
+
+  const formatDate = (dateString) => (dateString && format(new Date(dateString), dateFormat)) || '';
+  const formatUrlDate = (dateString) => (dateString && format(new Date(dateString), 'yyyy-MM-dd')) || '';
+
+  $: urlFormattedCheckIn = formatUrlDate(checkIn);
+  $: urlFormattedCheckOut = formatUrlDate(checkOut);
+  $: formattedCheckIn = formatDate(checkIn);
+  $: formattedCheckOut = formatDate(checkOut);
+
+  $: formattedDates = checkIn && checkOut ? `${formattedCheckIn} - ${formattedCheckOut}` : '날짜 입력';
+  $: length = checkIn && checkOut ? differenceInDays(new Date(checkOut), new Date(checkIn)) : 0;
+
+  const handleSearch = () => {
+    // 현재 날짜와 1주일 후의 날짜 계산
+    const now = new Date();
+    const defaultCheckInDate = format(now, 'yyyy-MM-dd');
+    const defaultCheckOutDate = format(addDays(now, 7), 'yyyy-MM-dd');
+
+    // 입력된 값이 없을 때 기본 날짜로 설정
+    const checkInDate = urlFormattedCheckIn || defaultCheckInDate;
+    const checkOutDate = urlFormattedCheckOut || defaultCheckOutDate;
+
+    // 체류 기간 계산
+    const length = differenceInDays(new Date(checkOutDate), new Date(checkInDate));
+
+    // URL 생성
+    const url = `/accommodations?checkin=${checkInDate}&checkout=${checkOutDate}&length=${length}&capacity=${totalGuests}&price_min=${selectedMinPrice}&price_max=${selectedMaxPrice}`;
+    window.location.href = url;
+  };
 </script>
 
 
@@ -76,40 +137,32 @@
 
     <div class="ContentContainer relative flex w-full px-[190px] bg-white">
       <div class="Information flex flex-col w-[650px] bg-white py-5">
-    <span class="text-lg text-zinc-600 font-normal font-['Noto Sans KR']">
-      최대 인원 {accommodation.maxGuests}명 ∙ 침실 {accommodation.bedroom}개
-      {#if accommodation.bath !== 0}
-      <span> ∙ 욕실 {accommodation.bath}개</span>
-      {/if}
-    </span>
-        <span class="text-lg flex text-zinc-600 font-normal font-['Noto Sans KR'] pb-3">
-      <span class="Icon w-6 h-6"><img src="../../src/assets/point_icon.svg" /></span>
+
+        <span class="text-lg text-zinc-600 font-normal font-['Noto Sans KR'] py-1 description-trigger">
+          {accommodation.accommodationType} ∙ {accommodation.buildingType}
+        </span>
+
+        <span class="text-lg text-zinc-600 font-normal font-['Noto Sans KR'] py-1">
+          최대 인원 {accommodation.maxGuests}명 ∙ 침실 {accommodation.bedroom}개
+          {#if accommodation.bath !== 0}
+            <span> ∙ 욕실 {accommodation.bath}개</span>
+          {/if}
+        </span>
+        <span class="text-lg flex text-zinc-600 font-normal font-['Noto Sans KR'] pb-3 py-1">
+        <span class="Icon w-6 h-6"><img src="../../src/assets/point_icon.svg" /></span>
       <button class="underline" on:click={null}>후기 3개</button>
     </span>
 
         <hr>
 
-        <div class="py-7 flex space-x-5">
-          <div class="flex space-x-1">
-            <span class="Icon w-5 h-5"><img src="../../src/assets/amenity_icon.svg" /></span>
-            <span class="text-basic flex text-zinc-600 font-normal font-['Noto Sans KR']">사가정역 근처</span>
-          </div>
-          <div class="flex space-x-1">
-            <span class="Icon w-5 h-5"><img src="../../src/assets/amenity_icon.svg" /></span>
-            <span class="text-basic flex text-zinc-600 font-normal font-['Noto Sans KR']">셀프 체크인</span>
-          </div>
-          <div class="flex space-x-1">
-            <span class="Icon w-5 h-5"><img src="../../src/assets/amenity_icon.svg" /></span>
-            <span class="text-basic flex text-zinc-600 font-normal font-['Noto Sans KR']">세탁기 및 건조기</span>
-          </div>
-          <div class="flex space-x-1">
-            <span class="Icon w-5 h-5"><img src="../../src/assets/amenity_icon.svg" /></span>
-            <span class="text-basic flex text-zinc-600 font-normal font-['Noto Sans KR']">무선 인터넷</span>
-          </div>
-          <div class="flex space-x-1">
-            <span class="Icon w-5 h-5"><img src="../../src/assets/amenity_icon.svg" /></span>
-            <span class="text-basic flex text-zinc-600 font-normal font-['Noto Sans KR']">에어컨</span>
-          </div>
+
+        <div class="py-7 flex flex-wrap">
+          {#each Object.entries(accommodation.facilities.facilityTypes) as [facilityCategory, facilities]}
+            <div class="flex space-x-1 w-1/5">
+              <span class="Icon w-5 h-5"><img src="../../src/assets/amenity_icon.svg" /></span>
+              <span class="text-basic flex text-zinc-600 font-normal font-['Noto Sans KR']">{facilities[0].name}</span>
+            </div>
+          {/each}
         </div>
 
         <hr>
@@ -137,26 +190,26 @@
 
           <div class="BookingInfoContainer relative left-1/2 transform -translate-x-1/2 mt-12 justify-center grid grid-rows-2 grid-cols-2 h-[130px] w-[400px] bg-white rounded-xl border">
             <!-- 첫 번째 칸 (체크인 라벨) -->
-            <div class="flex flex-col ml-5 mt-3 border-r border-b">
+            <button class="flex flex-col ml-5 mt-3 border-r border-b" on:click={toggleCalendarPopup}>
               <div class="Label text-black text-xs font-bold font-['Noto Sans KR'] uppercase">체크인</div>
-              <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">2022.02.22</div>
-            </div>
+              <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">{formattedCheckIn || '날짜 입력'}</div>
+            </button>
             <!-- 두 번째 칸 (체크아웃 라벨) -->
-            <div class="flex flex-col ml-5 mt-3 border-b">
-              <div class="Label text-black text-xs font-bold font-['Noto Sans KR'] uppercase">체크아웃</div>
-              <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">2022.02.22</div>
-            </div>
+            <button class="flex flex-col ml-5 mt-3 border-b" on:click={toggleCalendarPopup}>
+              <div class="Label text-black text-xs font-bold font-['Noto Sans KR'] uppercase" >체크아웃</div>
+              <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">{formattedCheckOut || '날짜 입력'}</div>
+            </button>
             <!-- 세 번째 칸 (인원) -->
-            <div class="flex flex-col ml-5 mt-3">
+            <button class="flex flex-col ml-5 mt-3" on:click={toggleGuestPopup}>
               <div class="Label text-black text-xs font-bold font-['Noto Sans KR'] uppercase">인원</div>
-              <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">게스트 4명</div>
-            </div>
+              <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">게스트 {totalGuests}명</div>
+            </button>
             <!-- 빈 칸 -->
             <div class="flex flex-col ml-5 mt-3"></div>
           </div>
 
           <button on:click={null} class="BookingButton cursor-pointer absolute bg-red-500 left-1/2 top-[210px] transform -translate-x-1/2 h-[50px] w-[400px] bg-white rounded-xl border">
-            <div class="text-white text-s font-bold font-['Noto Sans KR'] uppercase">예약하기</div>
+            <button class="text-white text-s font-bold font-['Noto Sans KR'] uppercase">예약하기</button>
           </button>
 
           <div class="relative flex flex-col left-1/2 transform -translate-x-1/2 pt-20 pb-7 h-[50px] w-[400px] items-center justify-center">
@@ -165,23 +218,31 @@
 
           <div class="PaymentDetails relative left-1/2 transform -translate-x-1/2 mt-1 justify-center w-[400px]  rounded-xl ">
             <div class="flex justify-between px-5 py-2">
-              <span class="text-black text-s font-['Noto Sans KR'] underline">₩{formatAmountWithCommas(accommodation.costPerNight)} X 5박</span>
-              <span class="text-black text-s font-normal font-['Noto Sans KR']">₩20,000</span>
+              <span class="text-black text-s font-['Noto Sans KR'] underline">₩{formatAmountWithCommas(accommodation.costPerNight)} X {length}박</span>
+              <span class="text-black text-s font-normal font-['Noto Sans KR']">₩{formatAmountWithCommas(accommodation.costPerNight * length)}</span>
             </div>
-            <div class="flex justify-between px-5 py-2 border-t">
-              <span class="text-black text-s font-['Noto Sans KR'] underline">총 할인금액</span>
-              <span class="text-black text-s font-normal font-['Noto Sans KR']">₩2,000</span>
-            </div>
+
             <div class="flex justify-between px-5 py-2 border-t">
               <span class="text-black text-s font-['Noto Sans KR'] underline">에어비앤비 서비스 수수료</span>
-              <span class="text-black text-s font-normal font-['Noto Sans KR']">₩2,000</span>
+              <span class="text-black text-s font-normal font-['Noto Sans KR']">₩{formatAmountWithCommas(accommodation.costPerNight * length * 0.14)}</span>
+            </div>
+
+            <div class="flex justify-between px-5 py-2 border-t">
+              <span class="text-black text-s font-['Noto Sans KR'] underline">총 할인금액</span>
+              <span class="text-black text-s font-normal font-['Noto Sans KR']">
+                {#if length > 0}
+                  -₩{formatAmountWithCommas(Math.abs(accommodation.costPerNight * length * 0.1))}
+                {:else}
+                  ₩{formatAmountWithCommas(0)}
+                {/if}
+              </span>
             </div>
 
             <hr>
 
             <div class="flex justify-between px-5 py-3 border-t">
               <span class="text-black text-s font-bold font-['Noto Sans KR']">총 합계</span>
-              <span class="text-black text-s font-bold font-['Noto Sans KR']">₩2,00,000</span>
+              <span class="text-black text-s font-bold font-['Noto Sans KR']">₩{formatAmountWithCommas(accommodation.costPerNight * length * 1.04)}</span>
             </div>
           </div>
 
@@ -207,44 +268,24 @@
     </div>
 
 
-
-
-
-
-
-<!--      <p><b>주소:</b> {accommodation.address.country}, {accommodation.address.zipcode}, {accommodation.address.address}, {accommodation.address.detailedAddress}</p>-->
-<!--      <p><b>좌표:</b> ({accommodation.coordinate.longitude}, {accommodation.coordinate.latitude})</p>-->
-<!--      <p><b>침실:</b> {accommodation.bedroom}개, <b>침대:</b> {accommodation.bed}개, <b>욕조:</b> {accommodation.bath}개</p>-->
-<!--      <p><b>최대 인원:</b> {accommodation.maxGuests}인</p>-->
-<!--      <p><b>금액:</b> {formatAmountWithCommas(accommodation.costPerNight)}\/박</p>-->
-
-<!--      <hr>-->
-
-<!--      <h3>호스트</h3>-->
-<!--      &lt;!&ndash;        <img src="{accommodation.hostImgUrl}" alt="{accommodation.hostName}" width="600"/>&ndash;&gt;-->
-<!--      <h4>{accommodation.hostName}</h4>-->
-
-<!--      <hr>-->
-
-<!--      <h3>설명</h3>-->
-<!--      <p>{accommodation.description}</p>-->
-
-<!--      <hr>-->
-
-<!--      <h3>편의시설</h3>-->
-<!--      {#each Object.entries(accommodation.facilities.facilityTypes) as [facilityCategory, facilities]}-->
-<!--        <h4>{facilityCategory}</h4>-->
-<!--        <ul>-->
-<!--          {#each facilities as facility}-->
-<!--            <li>{facility.name}</li>-->
-<!--          {/each}-->
-<!--        </ul>-->
-<!--      {/each}-->
-
-<!--      <hr>-->
-
-
   {:else}
     <p>숙소를 찾을 수 없습니다.</p>
   {/if}
 </div>
+
+{#if onCalendarPopup}
+
+  <CalendarPopup
+      bind:checkIn
+      bind:checkOut
+      {dowLabels}
+      {monthLabels}
+      {onCalendarPopup}
+      on:dateSelected={handleDateSelected}
+      on:toggle={toggleCalendarPopup}
+  />
+{/if}
+
+{#if onGuestPopup}
+  <GuestPopup bind:total={totalGuests} on:toggle={onGuestPopup} onClose={handleGuestsSelected} />
+{/if}

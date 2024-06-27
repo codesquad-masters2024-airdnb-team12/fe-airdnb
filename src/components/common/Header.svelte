@@ -1,17 +1,15 @@
 <script>
-  import { auth } from "../../stores/auth.js";
+  import { onMount } from 'svelte';
+  import { loggedInMember, initializeUser, handleLogout } from "../../stores/stores";
   import ProfilePopup from "./ProfilePopup.svelte";
-
-  export let member;
 
   let isProfileMenuClick = false;
   let isLoggedIn = false;
 
-  member = {...auth}
-  isLoggedIn = member.isLoggedIn;
+  $: isLoggedIn = !!$loggedInMember;
 
   const onProfileImg = () => {
-    return member.profileImgUrl ? member.profileImgUrl : "../../src/assets/profile_icon.svg";
+    return $loggedInMember?.imgUrl || "../../src/assets/profile_icon.svg";
   }
 
   const onProfileMenuClick = () => {
@@ -21,9 +19,11 @@
   const closePopup = () => {
     isProfileMenuClick = false;
   }
+
+  onMount(() => {
+    initializeUser();
+  });
 </script>
-
-
 
 <header class="w-[1440px] h-[94px] absolute left-0 top-0 items-center">
   <div class="GnbField w-full h-full absolute left-0 top-0"></div>
@@ -37,7 +37,7 @@
   </div>
   <div class="user-menu-container">
     <button on:click={onProfileMenuClick} class="user-menu-icon">
-      <img src="../../src/assets/menu_icon.svg" alt="User Menu Icon" />
+      <img src="../../src/assets/menu_icon.svg" alt="User Menu Icon"/>
     </button>
     <div class="user-profile">
       <img src={onProfileImg()} alt="User Profile Icon" class="user-profile-icon"/>
@@ -48,6 +48,8 @@
       <ProfilePopup bind:isProfileMenuClick={isProfileMenuClick} bind:isLoggedIn={isLoggedIn}/>
     {/if}
   </div>
-
-
 </header>
+
+<style>
+  /* 스타일 생략 */
+</style>

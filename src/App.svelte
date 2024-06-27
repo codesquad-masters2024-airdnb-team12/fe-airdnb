@@ -1,22 +1,17 @@
 <script>
   import Router from './route.svelte'
-  import { auth, isRefresh } from "./stores/auth.js";
-  import {onMount} from "svelte";
+  import { loggedInMember, initializeUser } from "./stores/stores";
+  import { onMount } from "svelte";
 
-  const refresh_time = 1000 * 60 * 30;
+  // const refresh_time = 1000 * 60 * 30;
 
   onMount(() => {
-    const onRefresh = setInterval(() => {
-      if($isRefresh) {
-        auth.refresh()
-      } else {
-        clearInterval(onRefresh)
-      }
-    }, refresh_time)
-  })
+    initializeUser();
+  });
+
 </script>
 
 
 <div id="main-container w-full h-full">
-  <Router />
+  <Router {loggedInMember}/>
 </div>

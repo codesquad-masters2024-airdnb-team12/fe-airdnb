@@ -6,6 +6,7 @@
   import AccommodationDetail from "./components/accommodation/AccommodationDetail.svelte";
   import NotFound from './pages/NotFound.svelte';
 
+
   // 여기에 정의된 경로 외에는 모두 NotFound 페이지로 연결됩니다.
   // const validPaths = ['/accommodations', '/', '/register'];
 

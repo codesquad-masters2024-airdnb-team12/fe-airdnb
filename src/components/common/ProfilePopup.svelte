@@ -1,10 +1,10 @@
 <script>
   import {get} from "svelte/store"
-  import {auth} from "../../stores/auth.js";
+  import { loggedInMember, handleLogout } from "../../stores/stores";
   import AuthPopup from "./AuthPopup.svelte";
 
   export let isProfileMenuClick
-  export let isLoggedIn
+  export let isLoggedIn = $loggedInMember
   export let isLoginClick
 
   const onLoginPopupClick = () => {
@@ -17,12 +17,11 @@
 
   const onLogout = () => {
     isProfileMenuClick = !isProfileMenuClick;
-    auth.logout()
+    handleLogout()
   }
 
   const onWithdraw = () => {
     isProfileMenuClick = !isProfileMenuClick;
-    auth.withdraw()
   }
 </script>
 
@@ -54,7 +53,7 @@
 
     {#if isLoginClick}
       <div class="overlay fixed bg-black " on:click={closeLoginPopup}></div>
-      <div class="fixed flex items-center justify-center">
+      <div>
         <AuthPopup closeLoginPopup={closeLoginPopup} />
       </div>
     {/if}
