@@ -32,6 +32,14 @@
       throw e;
     }
   }
+
+  // const resultMap = document.querySelector('.result-map')
+  //
+  // const map = new kakao.maps.Map(resultMap, {
+  //   center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+  //   level: 5
+  // })
+
 </script>
 
 <img class="HeroImg w-full h-[700px] justify-center left-0 top-0 absolute filter grayscale" src="../../src/assets/hero_image.png" />
@@ -73,6 +81,6 @@
 
     {/if}
 
-
   </div>
+<!--  <div id="map" style="width:500px;height:400px;"></div>-->
 </div>

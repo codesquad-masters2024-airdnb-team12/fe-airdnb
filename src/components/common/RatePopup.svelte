@@ -41,7 +41,7 @@
   });
 </script>
 
-<div class="flex absolute left-[650px] top-[160px] rounded-lg justify-center items-center text-black">
+<div class="fixed left-1/2 transform -translate-x-1/2 top-1/4 rounded-lg text-black z-50">
   <div class="popup bg-white p-6 rounded-lg shadow-lg">
     <div class="range-slider">
       <div class="text-lg font-bold mb-4">가격 범위</div>

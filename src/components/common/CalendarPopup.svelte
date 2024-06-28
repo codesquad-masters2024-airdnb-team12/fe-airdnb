@@ -23,7 +23,7 @@
   // };
 </script>
 
-<div class="fixed left-1/4 transform -translate-x-1/2 top-1/4">
+<div class="fixed left-1/4 transform -translate-x-1/2 top-1/4 z-50">
   <DatePicker
       theme="custom-datepicker"
       isOpen={true}

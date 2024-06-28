@@ -8,7 +8,7 @@ const send = async ({method='', path='', data={}, access_token=''} = {}) => {
   const headers = {
     "content-type": "application/json;charset=UTF-8",
     "accept": "application/json",
-    'Authorization': access_token ? `Bearer ${access_token}` : ''
+    // 'Authorization': access_token ? `Bearer ${access_token}` : ''
   };
 
   const options = {
@@ -16,7 +16,7 @@ const send = async ({method='', path='', data={}, access_token=''} = {}) => {
     url,
     headers,
     data,
-    withCredentials: true,
+    // withCredentials: true,
   }
 
   try {

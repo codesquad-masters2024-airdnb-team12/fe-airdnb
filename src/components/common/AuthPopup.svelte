@@ -1,6 +1,4 @@
 <script>
-  import { handleLogin } from "../../stores/stores";
-  import {onMount} from "svelte";
 
   // OAuth 로그인 URL
   const loginUrls = {
@@ -10,20 +8,19 @@
     google: 'https://accounts.google.com/o/oauth2/auth?...'
   };
 
-  // OAuth 로그인 핸들러
-  onMount(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    const refreshToken = params.get('refreshToken');
-
-    if (token && refreshToken) {
-      storeTokens(token, refreshToken);
-      // 리다이렉트 후 추가 처리 로직
-    }
-  });
-
   const handleClose = () => {
     $$props.closeLoginPopup();
+  };
+
+
+
+  const handleOAuthLogin = (provider) => {
+    const url = loginUrls[provider];
+    if (url) {
+      window.location.href = `http://localhost:8080/api/v1` + url; // OAuth URL로 리디렉션
+    } else {
+      alert("지원하지 않는 로그인 제공자입니다.");
+    }
   };
 </script>
 

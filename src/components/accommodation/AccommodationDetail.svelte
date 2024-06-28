@@ -8,13 +8,20 @@
   import {addDays, differenceInDays, format} from "date-fns";
   import CalendarPopup from "../common/CalendarPopup.svelte";
   import GuestPopup from "../common/GuestPopup.svelte";
+  import CardPopup from "../common/CardPopup.svelte";
+  import axios from "axios";
 
   export let accommodationId;
   export let checkIn;
   export let checkOut;
-  export let totalGuests = 0;
+  export let adultGuests = 2;
+  export let childrenGuests = 0;
+  export let infantGuests = 0;
+  export let totalGuests = 2;
+  export let cardName;
 
   let onGuestPopup = false;
+  let onCardPopup = false;
   let accommodation = null;
   let loading = true;
   let onCalendarPopup = false;
@@ -49,10 +56,19 @@
     onCalendarPopup = !onCalendarPopup;
   };
 
-  const handleGuestsSelected = (total) => {
+  const handleGuestsSelected = (total, adults, children, infants) => {
+    adultGuests = adults;
+    childrenGuests = children;
+    infantGuests = infants;
     totalGuests = total;
     toggleGuestPopup();
   };
+
+
+  const handleCardSelected = (card) => {
+    cardName = card;
+    toggleCardPopup();
+  }
 
   const handleDateSelected = (e) => {
     const { startDate, endDate } = e.detail;
@@ -65,6 +81,10 @@
     onGuestPopup = !onGuestPopup;
   };
 
+  const toggleCardPopup = () => {
+    onCardPopup = !onCardPopup;
+  }
+
   const formatDate = (dateString) => (dateString && format(new Date(dateString), dateFormat)) || '';
   const formatUrlDate = (dateString) => (dateString && format(new Date(dateString), 'yyyy-MM-dd')) || '';
 
@@ -76,23 +96,47 @@
   $: formattedDates = checkIn && checkOut ? `${formattedCheckIn} - ${formattedCheckOut}` : '날짜 입력';
   $: length = checkIn && checkOut ? differenceInDays(new Date(checkOut), new Date(checkIn)) : 0;
 
-  const handleSearch = () => {
-    // 현재 날짜와 1주일 후의 날짜 계산
-    const now = new Date();
-    const defaultCheckInDate = format(now, 'yyyy-MM-dd');
-    const defaultCheckOutDate = format(addDays(now, 7), 'yyyy-MM-dd');
 
-    // 입력된 값이 없을 때 기본 날짜로 설정
-    const checkInDate = urlFormattedCheckIn || defaultCheckInDate;
-    const checkOutDate = urlFormattedCheckOut || defaultCheckOutDate;
+  const handleBooking = async () => {
+    const requestDto = {
+      checkIn: urlFormattedCheckIn,
+      checkOut: urlFormattedCheckOut,
+      total: totalGuests,
+      adults: adultGuests,
+      children: childrenGuests,
+      infants: infantGuests,
+      cardName: cardName
+    };
+    try {
+      const response = await axios.post(`http://localhost:8080/api/v1/bookings/${accommodationId}`, requestDto);
 
-    // 체류 기간 계산
-    const length = differenceInDays(new Date(checkOutDate), new Date(checkInDate));
-
-    // URL 생성
-    const url = `/accommodations?checkin=${checkInDate}&checkout=${checkOutDate}&length=${length}&capacity=${totalGuests}&price_min=${selectedMinPrice}&price_max=${selectedMaxPrice}`;
-    window.location.href = url;
+      if (response.status >= 200 && response.status < 300) {
+        alert('예약 완료');
+      } else {
+        alert('예약 실패');
+      }
+    } catch (error) {
+      alert('예약 실패');
+    }
   };
+
+  // const handleSearch = () => {
+  //   // 현재 날짜와 1주일 후의 날짜 계산
+  //   const now = new Date();
+  //   const defaultCheckInDate = format(now, 'yyyy-MM-dd');
+  //   const defaultCheckOutDate = format(addDays(now, 7), 'yyyy-MM-dd');
+  //
+  //   // 입력된 값이 없을 때 기본 날짜로 설정
+  //   const checkInDate = urlFormattedCheckIn || defaultCheckInDate;
+  //   const checkOutDate = urlFormattedCheckOut || defaultCheckOutDate;
+  //
+  //   // 체류 기간 계산
+  //   const length = differenceInDays(new Date(checkOutDate), new Date(checkInDate));
+  //
+  //   // URL 생성
+  //   const url = `/accommodations?checkin=${checkInDate}&checkout=${checkOutDate}&length=${length}&capacity=${totalGuests}&price_min=${selectedMinPrice}&price_max=${selectedMaxPrice}`;
+  //   window.location.href = url;
+  // };
 </script>
 
 
@@ -188,7 +232,7 @@
             <span class="flex text-zinc-800 text-xl font-basic font-['Noto Sans KR']">/박</span>
           </div>
 
-          <div class="BookingInfoContainer relative left-1/2 transform -translate-x-1/2 mt-12 justify-center grid grid-rows-2 grid-cols-2 h-[130px] w-[400px] bg-white rounded-xl border">
+          <div class="BookingInfoContainer relative left-1/2 transform -translate-x-1/2 mt-12 justify-center grid grid-rows-3 grid-cols-2 h-[180px] w-[400px] bg-white rounded-xl border">
             <!-- 첫 번째 칸 (체크인 라벨) -->
             <button class="flex flex-col ml-5 mt-3 border-r border-b" on:click={toggleCalendarPopup}>
               <div class="Label text-black text-xs font-bold font-['Noto Sans KR'] uppercase">체크인</div>
@@ -200,19 +244,30 @@
               <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">{formattedCheckOut || '날짜 입력'}</div>
             </button>
             <!-- 세 번째 칸 (인원) -->
-            <button class="flex flex-col ml-5 mt-3" on:click={toggleGuestPopup}>
+            <button class="flex flex-col ml-5 mt-3 border-b" on:click={toggleGuestPopup}>
               <div class="Label text-black text-xs font-bold font-['Noto Sans KR'] uppercase">인원</div>
-              <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">게스트 {totalGuests}명</div>
+              <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">게스트 {totalGuests || 2}명</div>
+              <hr>
             </button>
             <!-- 빈 칸 -->
+            <div class="flex flex-col ml-5 mt-3 border-b"></div>
+
+
+            <button class="flex flex-col ml-5 mt-3" on:click={toggleCardPopup}>
+              <div class="Label text-black text-xs font-bold font-['Noto Sans KR'] uppercase">카드</div>
+              <div class="text-neutral-600 text-sm font-normal font-['Noto Sans KR'] uppercase">{cardName || '카드 선택'}</div>
+            </button>
             <div class="flex flex-col ml-5 mt-3"></div>
-          </div>
+            </div>
 
-          <button on:click={null} class="BookingButton cursor-pointer absolute bg-red-500 left-1/2 top-[210px] transform -translate-x-1/2 h-[50px] w-[400px] bg-white rounded-xl border">
-            <button class="text-white text-s font-bold font-['Noto Sans KR'] uppercase">예약하기</button>
-          </button>
+          <form on:submit|preventDefault={handleBooking} class="BookingButtonForm">
+            <button class="BookingButton bg-red-600 absolute left-1/2 top-[260px] transform -translate-x-1/2 h-[50px] w-[400px] rounded-xl border">
+              <div class="text-white text-s font-bold font-['Noto Sans KR'] uppercase">예약하기</div>
+            </button>
+          </form>
 
-          <div class="relative flex flex-col left-1/2 transform -translate-x-1/2 pt-20 pb-7 h-[50px] w-[400px] items-center justify-center">
+
+          <div class="relative mt-10 flex flex-col left-1/2 transform -translate-x-1/2 pt-10 pb-7 w-[400px] items-center justify-center">
             <span class="absolute text-neutral-900 text-sm font-['Noto Sans KR'] justify-center uppercase">예약 확정 전에는 요금이 청구되지 않습니다.</span>
           </div>
 
@@ -287,5 +342,10 @@
 {/if}
 
 {#if onGuestPopup}
-  <GuestPopup bind:total={totalGuests} on:toggle={onGuestPopup} onClose={handleGuestsSelected} />
+  <GuestPopup
+      bind:total={totalGuests} bind:adults={adultGuests} bind:children={childrenGuests} bind:infants={infantGuests} on:toggle={onGuestPopup} onClose={handleGuestsSelected} />
+{/if}
+
+{#if onCardPopup}
+  <CardPopup bind:card={cardName} on:toggle={onCardPopup} onClose={handleCardSelected} />
 {/if}

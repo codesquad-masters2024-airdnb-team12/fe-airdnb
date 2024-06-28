@@ -106,7 +106,6 @@
 </div>
 
 {#if onCalendarPopup}
-  <div class="">
 
     <CalendarPopup
         bind:checkIn
@@ -117,7 +116,6 @@
         on:dateSelected={handleDateSelected}
         on:toggle={toggleCalendarPopup}
     />
-  </div>
 {/if}
 
 {#if onRatePopup}

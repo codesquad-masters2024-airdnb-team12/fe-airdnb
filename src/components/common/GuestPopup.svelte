@@ -2,11 +2,10 @@
   import { onMount, onDestroy } from 'svelte';
 
   export let total = 0;
+  export let adults = 2;
+  export let children = 0;
+  export let infants = 0;
   export let onClose;
-
-  let adults = 2;
-  let children = 0;
-  let infants = 0;
 
   const updateTotal = () => {
     total = adults + children + infants;
@@ -29,7 +28,7 @@
   const handleClickOutside = (event) => {
     if (!event.target.closest('.popup')) {
       updateTotal();
-      onClose(total);
+      onClose(total, adults, children, infants);
     }
   };
 
@@ -42,7 +41,7 @@
   });
 </script>
 
-<div class="fixed left-1/2 transform -translate-x-1/2 top-1/4 rounded-lg text-black">
+<div class="fixed left-1/2 transform -translate-x-1/2 top-1/4 rounded-lg text-black z-50">
   <div class="popup bg-white p-6 rounded-lg shadow-lg w-80">
     <div class="space-y-6">
       <div class="flex justify-between items-center">
